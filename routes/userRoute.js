@@ -10,7 +10,6 @@ const {
     passwordUpdate,
     LoggedInUserDetailsUpdate,
     adminAllUsers
-
  } = require('../controllers/userController')
 const { isLoggedIn , customRole } = require("../middlewares/userInfo")
 

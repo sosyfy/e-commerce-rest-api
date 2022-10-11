@@ -44,7 +44,7 @@ exports.login = BigPromise( async ( req ,res ,next )=>{
         return next( new CustomError("password is incorrect" , 400 ))
     }
 
-    cookieToken(user,res)
+    cookieToken( user , res)
 
 })
 
