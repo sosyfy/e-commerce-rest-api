@@ -79,17 +79,28 @@ exports.findOneProduct = BigPromise( async ( req , res , next )=>{
     const { id } = req.params;
     
     const product = await Product.findById(id)
+
     .catch(()=>{
         ErrorResponse(res , "Could not find product by Id")
         return next( new CustomError(404 , false , "could not find product "))
     })
     
-  
+    //& get featured products
+    const recommendedProducts = await Product.find({ subCategory: product.subCategory }).limit(10)
+
+    //& get from same brand 
+    const sameBrand = await Product.find({ brand : product.brand }).limit(10)
+
     //& send the user the product 
     res.status(201).json({
         success : true ,
         message: "fetch success",
-        data: product
+        data: {
+         product ,
+         recommendedProducts,
+         sameBrand 
+        }
+            
     })
 })
 
@@ -163,6 +174,7 @@ exports.deleteOneProduct = BigPromise( async ( req , res , next )=>{
     //& delete product if it exists
 
      await product.remove()
+     
      .catch((err)=>{
         ErrorResponse(res , "Unable to delete this Product", err.message )
         return next( new CustomError(404 , false , "Unable to delete this Product"))
@@ -185,7 +197,7 @@ exports.addReview = BigPromise( async ( req , res , next )=>{
 
     const review = {
         user: req.user._id,
-        name: req.user.firstName,
+        author: req.user.firstName + " " + req.user.lastName,
         rating: Number(rating),
         comment: comment
     }
@@ -193,6 +205,7 @@ exports.addReview = BigPromise( async ( req , res , next )=>{
     //& find the product to review 
 
     const product = await Product.findById( productId )
+
     .catch((err)=>{
         ErrorResponse(res , "Unable to find this Product", err.message )
         return next( new CustomError(404 , false , "Unable to find this Product"))
@@ -200,7 +213,7 @@ exports.addReview = BigPromise( async ( req , res , next )=>{
     
     //& Case 1 : if product  is already reviewed by user update the review with new details 
     const AlreadyReviewed = product.reviews.find(
-         (rev)=> rev.user.toString() === req.user._id.toString()
+         ( rev )=> rev.user.toString() === req.user._id.toString()
     )
 
     if ( AlreadyReviewed ) {

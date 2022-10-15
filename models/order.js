@@ -50,7 +50,7 @@ const orderSchema = new mongoose.Schema({
         },
         product: {
             type: mongoose.Schema.ObjectId,
-            ref:"Product",
+            ref: "Product",
             required: false 
         }
     }
@@ -78,8 +78,8 @@ const orderSchema = new mongoose.Schema({
     required: true 
   },
 
-  orderStatus:{
-    type: String,
+  orderStatusId:{
+    type: mongoose.Schema.ObjectId,
     required: true,
     default: "processing"
   },

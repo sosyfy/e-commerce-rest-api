@@ -15,19 +15,38 @@ const productSchema = new mongoose.Schema({
     required : [true , "Please provide a product description"],
    },
 
+   summaryDescription : {
+    type: String ,
+   },
+
    price : {
     type: Number,
     required : [true , "Please provide a product price"],
    },
 
-   category : {
-    type: String ,
-    required : [true , "Please provide a product category"],
+   dicountedPrice : {
+    type: Number,
+   },
+
+   discountPercentage : {
+    type: Number,
+   },
+
+   categoryId : {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Category',
+    required : [true  , "Please provide a product category"],
+   },
+
+   subCategoryId : {
+    type: mongoose.Schema.ObjectId,
+    ref: 'SubCategory'
    },
 
    
-   brand : {
-    type: String ,
+   brandId : {
+    type: mongoose.Schema.ObjectId ,
+    ref: 'Brand',
     required : [true , "Please provide a product brand"],
    },
 
@@ -63,7 +82,7 @@ const productSchema = new mongoose.Schema({
             ref: "User",
             required: true 
         },
-        name: {
+        author : {
             type: String,
             required : true 
         },
@@ -83,20 +102,26 @@ const productSchema = new mongoose.Schema({
      required: true 
    },
 
-   createdAt : {
-     type : Date ,
-     default: Date.now 
-   },
-
+   
    inStock: {
-       type: Number,
-       required: true 
-   },
+     type: Number,
+     required: true 
+    },
 
-   active: {
-     type: Boolean,
-     default: true
-   }
+   numberOfOrders: {
+     type: Number,
+     default: 0 
+    },
+    
+    active: {
+      type: Boolean,
+      default: true
+    },
+
+    createdAt : {
+      type : Date ,
+      default: Date.now 
+    },
     
 })
 

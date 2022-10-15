@@ -11,7 +11,7 @@ const { validationErrorWithData, ErrorResponse } = require('../utils/apiResponse
 
 exports.signUp = BigPromise( async( req , res ,next )=>{
     
-    const { firstName , lastName , email , password } = req.body 
+    const { firstName , lastName , email , password, role } = req.body 
     //& data validtion from frontend 
 
     if(!email || !firstName || !lastName || !password ) {

@@ -32,7 +32,7 @@ app.use(hpp());
 
 
 //& reqular middlewares 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({extended: true }))
 
 //& coookies and file upload 
@@ -56,6 +56,10 @@ const home = require('./routes/home')
 const user = require('./routes/userRoute')
 const product = require('./routes/productsRoute')
 const order = require('./routes/orders')
+const brand = require('./routes/brandRoute')
+const category = require('./routes/categoryRoute')
+const subcategory = require('./routes/subCategoryRoute')
+const orderStatus = require('./routes/orderStatusRoute')
 
 //& Router middleware 
 
@@ -63,6 +67,10 @@ app.use('/api/v1', home )
 app.use('/api/v1', user )
 app.use('/api/v1', product )
 app.use('/api/v1', order )
+app.use('/api/v1', brand )
+app.use('/api/v1', category )
+app.use('/api/v1', subcategory )
+app.use('/api/v1', orderStatus )
 
 
 
