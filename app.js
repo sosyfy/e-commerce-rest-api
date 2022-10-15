@@ -55,13 +55,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const home = require('./routes/home')
 const user = require('./routes/userRoute')
 const product = require('./routes/productsRoute')
+const order = require('./routes/orders')
 
 //* Router middleware 
 
 app.use('/api/v1', home )
 app.use('/api/v1', user )
 app.use('/api/v1', product )
-
+app.use('/api/v1', order )
 
 
 

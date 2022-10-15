@@ -4,13 +4,16 @@ const CustomError = require('../utils/customErrors')
 const cookieToken = require('../utils/cookieToken')
 const mailHelper = require('../utils/emailHelper')
 const crypto = require('crypto')
+const { validationErrorWithData, ErrorResponse } = require('../utils/apiResponse')
 
 
 exports.signUp = BigPromise( async( req , res ,next )=>{
     const { firstName , lastName , email , password } = req.body 
 
     if(!email || !firstName || !lastName || !password ) {
-       return next( new CustomError("please send all details" , 404))
+        validationErrorWithData(res, "All feilds are required", req.body)
+
+       return next( new CustomError(404 , false , "please send all details" ))
     }
 
   const user = await User.create({
@@ -18,31 +21,41 @@ exports.signUp = BigPromise( async( req , res ,next )=>{
         lastName ,
         email ,
         password
+    }).catch((error )=> {
+        ErrorResponse(res, "Something happened when creating user", error )
     })
 
   cookieToken(user , res );
 
 })
 
+
+
 exports.login = BigPromise( async ( req ,res ,next )=>{
     const { email , password } = req.body 
 
     if ( !email || !password ) {
-        return next( new CustomError( "please provide email and password" , 400))
+
+        validationErrorWithData( res, "All feilds are required, please provide an email and a password", req.body )
+
+        return next( new CustomError( 404 , false,  "please provide email and password"))
     }
 
 
     const user = await User.findOne({ email }).select("+password")
 
     if(!user ) {
-        
-        return next( new CustomError("huyuko kwa db bro " , 400 ))
+
+        ErrorResponse(res, "User not found" )
+        return next( new CustomError(404 ,false , "User not found"))
     }
 
     const isPasswordCorrect = await user.isValidatedPassword(password)
 
     if(!isPasswordCorrect ) {
-        return next( new CustomError("password is incorrect" , 400 ))
+        ErrorResponse(res, "Password is incorrect" )
+
+        return next( new CustomError( 404 , false , "password is incorrect"))
     }
 
     cookieToken( user , res)
@@ -68,13 +81,18 @@ exports.forgotPassword = BigPromise(async ( req , res ,next )=>{
   const { email } = req.body 
 
     if(!email){
-        return next( new CustomError("Please pass an Email First"))
+
+        validationErrorWithData(res, "Please pass an Email First", req.body)
+
+        return next( new CustomError(404, false , "Please pass an Email First"))
     }
 
    const user = await User.findOne({email})
 
-   if (!user) {
-    return next( new CustomError("user not found "))
+   if (!user) { 
+    ErrorResponse(res, "User not found" )
+
+    return next( new CustomError( 404 , false , "user not found "))
    }
 
    const forgotToken = user.getForgetPasswordToken();
@@ -83,7 +101,7 @@ exports.forgotPassword = BigPromise(async ( req , res ,next )=>{
 
   const url = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${forgotToken}`
 
-  const message = `copy paste this link in our Url and hit enter \n\n ${url}`
+  const message = `Copy paste this link in our Url and hit enter \n\n ${url}`
 
   try {
     
@@ -103,7 +121,7 @@ exports.forgotPassword = BigPromise(async ( req , res ,next )=>{
 
     await  user.save({ validateBeforeSave: false })
   
-    return next( new CustomError(error.message ,500 ))
+    return next( new CustomError( 500, false , error.message))
   }
 
 
@@ -121,10 +139,11 @@ exports.passwordReset = BigPromise(async ( req , res ,next )=>{
     })
 
     if (!user ) {
-       return next(new CustomError("Token is invalid or expired", 400 ))  
-    }
 
-   console.log(user);
+        ErrorResponse(res, "Token is invalid or expired" )
+
+       return next(new CustomError(404, false , "Token is invalid or expired"))  
+    }
 
    user.password = req.body.password
 
@@ -150,7 +169,10 @@ exports.passwordUpdate = BigPromise( async ( req , res ,next )=> {
     const { oldPassword, newPassword } = req.body 
 
     if (!oldPassword) {
-        return next( new CustomError("Please enter your previous password"))
+
+        validationErrorWithData(res, "Please enter your previous password", req.body)
+
+        return next( new CustomError(404, false , "Please enter your previous password"))
     }
 
     const user = await User.findById(req.user.id).select("+password")
@@ -158,7 +180,9 @@ exports.passwordUpdate = BigPromise( async ( req , res ,next )=> {
     const isCorrectOldPassword = await user.isValidatedPassword(oldPassword)
     
     if (!isCorrectOldPassword) {
-        return next( new CustomError("Old password is incorrect"))
+        validationErrorWithData(res, "Old password is incorrect")
+        
+        return next( new CustomError( 404 , false , "Old password is incorrect"))
     }
 
     user.password = newPassword
