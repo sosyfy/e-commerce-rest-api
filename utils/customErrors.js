@@ -1,3 +1,4 @@
+//& A custom error function with added info 
 class CustomError extends Error {
     constructor(statusCode, status, message) {
         super(message);

@@ -31,40 +31,38 @@ app.use(xss());
 app.use(hpp());
 
 
-// * reqular middlewares 
+//& reqular middlewares 
 app.use(express.json())
 app.use(express.urlencoded({extended: true }))
 
-//* coookies and file upload 
+//& coookies and file upload 
 
 app.use(cookieParser())
 app.use(fileUpload())
 
 
-//* morgan middleware 
+//& morgan middleware  to display logs on console of visited routes 
 app.use(morgan("tiny"))
 
-//* swagger ui documentation 
+//& swagger ui documentation for api's 
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-//* import all routes here 
+//& import all routes here 
 
 const home = require('./routes/home')
 const user = require('./routes/userRoute')
 const product = require('./routes/productsRoute')
 const order = require('./routes/orders')
 
-//* Router middleware 
+//& Router middleware 
 
 app.use('/api/v1', home )
 app.use('/api/v1', user )
 app.use('/api/v1', product )
 app.use('/api/v1', order )
-
-
 
 
 

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
+//& Function to connect to Db 
 
-const connectWithDb = ()=> {
+const connectWithDb = () => {
 
     mongoose.connect(process.env.DB_URL, {
-        //must add in order to not get any error masseges:
+        //& must add in order to not get any error masseges:
         useUnifiedTopology:true,
         useNewUrlParser: true 
     }).then(
