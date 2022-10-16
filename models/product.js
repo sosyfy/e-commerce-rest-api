@@ -40,12 +40,13 @@ const productSchema = new mongoose.Schema({
 
    subCategoryId : {
     type: mongoose.Schema.ObjectId,
-    ref: 'SubCategory'
+    ref: 'SubCategory',
+    required : [true  , "Please provide a product category"],
    },
 
    
    brandId : {
-    type: mongoose.Schema.ObjectId ,
+    type: mongoose.Schema.Types.ObjectId ,
     ref: 'Brand',
     required : [true , "Please provide a product brand"],
    },
@@ -118,12 +119,37 @@ const productSchema = new mongoose.Schema({
       default: true
     },
 
-    createdAt : {
-      type : Date ,
-      default: Date.now 
+    updatedBy : {
+      type : String  
     },
     
-})
+},{timestamps: true})
+
+productSchema.methods.toJSONFor = function(){
+  return {
+      id : this._id,
+      name: this.name ,
+      summaryDescription: this.summaryDescription || null,
+      description: this.description || null,
+      price: this.price,
+      dicountedPrice: this.dicountedPrice || null,
+      discountPercentage: this.discountPercentage || null,
+      category: this.categoryId,
+      subCategory: this.subCategoryId,
+      brand: this.brandId,
+      photos : this.photos,
+      rating : this.rating,
+      numberOfReviews: this.numberOfReviews,
+      reviews: this.reviews,
+      inStock: this.inStock,
+      numberOfOrders: this.numberOfOrders,
+      active: this.active,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy  
+  }
+}
+
 
 
 module.exports = mongoose.model('Product', productSchema )

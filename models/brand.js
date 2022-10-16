@@ -5,13 +5,17 @@ const brandSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide an email"],
         unique: true 
-      },
-    
-    createdAt : {
-        type : Date ,
-        default: Date.now 
-      } 
-})
+      }
+} , {timestamps: true})
+
+brandSchema.methods.toJSONFor = function(brand){
+    return {
+        id: this._id,
+        name: this.name,
+        createdAt: this.createdAt,
+        updatedAt: this.updatedAt,
+    }
+}
 
 
 
